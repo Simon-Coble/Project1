@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrmFunctions {
-	Connection con = Configuration.getConnection();
+	Connection conn = Configuration.getConnection();
 	public boolean transaction;
 	private List<Boolean> finish;
 	
@@ -19,7 +19,7 @@ public class OrmFunctions {
             throw new Exception();
         } else {
             try {
-                con.commit();
+                conn.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -27,15 +27,15 @@ public class OrmFunctions {
 	}
 	public void rollback() {
 		try {
-			con.rollback();
+			conn.rollback();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	public void close() {
 	      try {
-	            if (con != null) {
-	                con.close();
+	            if (conn != null) {
+	                conn.close();
 	            }
 	            transaction = false;
 	        } catch (SQLException e) {

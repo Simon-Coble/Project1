@@ -9,7 +9,7 @@ import com.room3.annotations.Entity;
 import com.room3.annotations.Id;
 import com.room3.annotations.JoinCol;
 import com.room3.util.ColumnField;
-import com.room3.util.ForeignKeyField;
+import com.room3.util.ForeignKey;
 import com.room3.util.MetaModel;
 import com.room3.util.PrimaryKeyField;
 
@@ -18,7 +18,7 @@ public class MetaModel<T> {
 	private Class<?> clazz;
 	private PrimaryKeyField primaryKeyField;
 	private List<ColumnField> columnFields;
-	private List<ForeignKeyField> foreignKeyFields;
+	private List<ForeignKey> foreignKeyFields;
 
 	// create a method in which we pass a class through and generate a meta model OF
 	// the class
@@ -37,10 +37,10 @@ public class MetaModel<T> {
 		this.clazz = clazz; // since we've set the class as equal to the original class, we still intel on
 							// its fields
 		this.columnFields = new LinkedList<ColumnField>();
-		this.foreignKeyFields = new LinkedList<ForeignKeyField>();
+		this.foreignKeyFields = new LinkedList<ForeignKey>();
 	}
 
-	// getColumns() - returns a list of ColumnField
+	//  
 	public List<ColumnField> getColumns() {
 
 		Field[] fields = clazz.getDeclaredFields();
@@ -52,7 +52,7 @@ public class MetaModel<T> {
 			// the column reference variable will NOT be null if the field is indeed
 			// annotated with @Column
 			Column column = field.getAnnotation(Column.class);
-
+				column.columnName();
 			if (column != null) {
 				// if the column is indeed marked with @Colum, instantiate a new ColumnField
 				// object with its data
@@ -87,7 +87,7 @@ public class MetaModel<T> {
 	}
 
 	// getForeignKey - returns a list of foreignKeyFields
-	public List<ForeignKeyField> getForeignKeys() {
+	public List<ForeignKey> getForeignKeys() {
 
 		Field[] fields = clazz.getDeclaredFields();
 
@@ -96,7 +96,7 @@ public class MetaModel<T> {
 			JoinCol foreignKey = field.getAnnotation(JoinCol.class);
 
 			if (foreignKey != null) {
-				foreignKeyFields.add(new ForeignKeyField(field));
+				foreignKeyFields.add(new ForeignKey(field));
 			}
 		}
 		if (foreignKeyFields.isEmpty()) {

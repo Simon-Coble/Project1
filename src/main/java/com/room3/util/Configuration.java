@@ -16,5 +16,6 @@ public class Configuration {
 	public static Connection getConnection() throws SQLException{
 		return ds.getConnection();
 	}
+	
 	private Configuration() {}
 }

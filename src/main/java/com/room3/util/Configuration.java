@@ -16,8 +16,13 @@ public class Configuration {
 		ds.setUsername("postgres");
 		ds.setPassword("postgres");
 	}
-	public static Connection getConnection() throws SQLException{
-		return ds.getConnection();
+	public static Connection getConnection(){
+		try {
+			return ds.getConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	public Configuration() {}
 	

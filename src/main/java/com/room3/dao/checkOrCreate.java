@@ -11,10 +11,10 @@ import com.room3.util.MetaModel;
 
 public class checkOrCreate {
 
-	public Object selectAllByValueInColumn(String value, Column column, Entity table) {
+	public Object selectAllByValueInColumn(String value, Column column, Object o) {
 		
 		String columnName = column.columnName(); 
-		String tableName = table.tableName();
+		String tableName = o.;
 		
 		Connection conn = Configuration.getConnection();
 		

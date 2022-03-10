@@ -20,7 +20,7 @@ public class Configuration {
 		return ds.getConnection();
 	}
 	
-	private Configuration() {}
+	public Configuration() {}
 	
 private List<MetaModel<Class<?>>> metaModelList; // for example, this is a placeholder for metamodels of SuperVillain, SuperPrison, Crime
 	

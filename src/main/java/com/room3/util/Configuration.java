@@ -19,7 +19,7 @@ public class Configuration {
 	public static Connection getConnection() throws SQLException{
 		return ds.getConnection();
 	}
-	private Configuration() {}
+	public Configuration() {}
 	
 private List<MetaModel<Class<?>>> metaModelList; // for example, this is a placeholder for metamodels of SuperVillain, SuperPrison, Crime
 	

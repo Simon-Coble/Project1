@@ -40,7 +40,7 @@ public class MetaModel<T> {
 		this.foreignKeyFields = new LinkedList<ForeignKey>();
 	}
 
-	// getColumns() - returns a list of ColumnField
+	//  
 	public List<ColumnField> getColumns() {
 
 		Field[] fields = clazz.getDeclaredFields();
@@ -52,7 +52,7 @@ public class MetaModel<T> {
 			// the column reference variable will NOT be null if the field is indeed
 			// annotated with @Column
 			Column column = field.getAnnotation(Column.class);
-
+				column.columnName();
 			if (column != null) {
 				// if the column is indeed marked with @Colum, instantiate a new ColumnField
 				// object with its data

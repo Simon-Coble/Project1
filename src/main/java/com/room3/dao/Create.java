@@ -18,6 +18,8 @@ import com.room3.util.Configuration;
 
 public class Create {
 
+	Calculator cal = new Calculator();
+	
 
 	public List<Class<?>> findAllClasses(String packageName) {
 		
@@ -30,10 +32,11 @@ public class Create {
 			p.addAnnotatedClasses(clazzes);
 
 			for (com.room3.util.MetaModel<Class<?>>  metamodel : p.getMetaModels()) {
-
-				System.out.printf("Printing MetaModel for class: %s\n", metamodel.getClass());
 				
+				StringBuilder sb = new StringBuilder();
+				String s = "CREATE TABLE IF NOT EXISTS " + metamodel.getSimpleClassName().toLowerCase() + " (";
 				
+				sb.append(s);		
 				
 				PrimaryKeyField pk = metamodel.getPrimaryKey();
 				List<ColumnField> columns = metamodel.getColumns();
@@ -42,7 +45,7 @@ public class Create {
 				try {
 					foreignKeyFields = metamodel.getForeignKeys();
 				} catch (RuntimeException e) {
-					// System.out.println("no fk found");
+					
 				}
 
 				System.out.printf(
@@ -50,9 +53,8 @@ public class Create {
 						pk.getName(), pk.getType(), pk.getColumnName());
 
 				for (ColumnField column : columns) {
-					System.out.printf(
-							"\t Found a column field named %s, of type %s, which maps to the column with name: %s\n",
-							column.getName(), column.getType().getSimpleName(), column.getColumnName());
+					String type = cal.getColType(column);
+					String here = column.getColumnName() + " " + type + " ,";
 				}
 				if (foreignKeyFields == null) {
 

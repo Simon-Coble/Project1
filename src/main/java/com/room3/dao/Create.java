@@ -7,23 +7,16 @@ import java.util.stream.Collectors;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 
-import com.revature.util.ColumnField;
-import com.revature.util.ForeignKeyField;
-import com.revature.util.MetaModel;
-import com.revature.util.PrimaryKeyField;
+import com.room3.util.ColumnField;
+import com.room3.util.ForeignKey;
+import com.room3.util.MetaModel;
+import com.room3.util.PrimaryKeyField;
 import com.room3.util.Configuration;
 
 @SuppressWarnings("deprecation")
 
 public class Create {
 
-	public void checkOrCreateTables (List<Class<>> meta) {
-		
-		
-		
-		
-		
-	}
 
 	public List<Class<?>> findAllClasses(String packageName) {
 		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
@@ -42,7 +35,7 @@ public class Create {
 				
 				PrimaryKeyField pk = metamodel.getPrimaryKey();
 				List<ColumnField> columns = metamodel.getColumns();
-				List<ForeignKeyField> foreignKeyFields = null;
+				List<ForeignKey> foreignKeyFields = null;
 
 				try {
 					foreignKeyFields = metamodel.getForeignKeys();
@@ -62,7 +55,7 @@ public class Create {
 				if (foreignKeyFields == null) {
 
 				} else {
-					for (ForeignKeyField foreignKey : foreignKeyFields) {
+					for (ForeignKey foreignKey : foreignKeyFields) {
 						System.out.printf(
 								"\t Found a foreign key field named %s, of type %s, which maps to the column with name: %s\n",
 								foreignKey.getName(), foreignKey.getType().getSimpleName(), foreignKey.getColumnName());

@@ -17,8 +17,11 @@ public class drivertest {
 	public static void main(String[] args) {
 	
 		
-		Object du=  new DummyUser(1,"user","pass");
+		Object du=  new DummyUser(5,"user","pass");
+		Object d2=  new DummyUser(6,"ueer","prass");
+		
 		int id = dao.insert(du);
+		int id2 = dao.insert(d2);
 		System.out.println(id);
 		
 		

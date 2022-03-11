@@ -1,6 +1,7 @@
 package com.room3.dao;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,10 +20,11 @@ public class Create {
 
 
 	public List<Class<?>> findAllClasses(String packageName) {
+		
 		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
 		List<Class<?>> clazzes = reflections.getSubTypesOf(Object.class).stream().collect(Collectors.toList());
-
 		Configuration p = new Configuration();
+		
 		try (Connection conn = Configuration.getConnection()) {
 
 			p.addAnnotatedClasses(clazzes);
@@ -64,7 +66,10 @@ public class Create {
 				}
 			}
 
+		} catch (SQLException e) {
+			
 		}
+		return clazzes;
 
 	}
 

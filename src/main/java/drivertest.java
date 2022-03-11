@@ -1,29 +1,28 @@
+import com.room3.demos.*;
+import com.room3.dao.*;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
+import com.room3.util.ColumnField;
+import com.room3.util.Configuration;
+import com.room3.util.ForeignKey;
+import com.room3.util.MetaModel;
+import com.room3.util.PrimaryKeyField;
 public class drivertest {
-	static String[] columns = { "tom","bob","loser","rabbit"};
+	static DaoImpl dao = new DaoImpl();
 	public static void main(String[] args) {
-		StringBuilder insertCommand = new StringBuilder();
-        int totalColumns = columns.length;
-        int totalColumnsQMarks = columns.length;
-         //String tableName = clazz.getSimpleName().toLowerCase();
-        insertCommand.append("insert into table ");//+tableName); 
-        insertCommand.append("(");
-        for(String f: columns) {
-        	String columnName = f;//.getName();  
-        	
-        		
-        	 	insertCommand.append(columnName);
-                insertCommand.append(totalColumns > 1 ? ", " : ") values(?");
-            
-            totalColumns--;
-        }
-        	
-        	
-        for(int i = 1; i < totalColumnsQMarks; i++){
-            insertCommand.append(",?");
-        }
-       insertCommand.append(");");
-	System.out.println(insertCommand);
+	
+		
+		Object du=  new DummyUser(1,"user","pass");
+		int id = dao.insert(du);
+		System.out.println(id);
+		
+		
+		
 	}
 
 }

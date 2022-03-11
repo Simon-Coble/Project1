@@ -18,12 +18,16 @@ public class DaoImpl {
 	private Configuration conn;
 	Configuration cfg = new Configuration();
 
-	List<MetaModel<Class<?>>> meta = cfg.getMetaModels();
-	List<PrimaryKeyField> pkFields = (List<PrimaryKeyField>) ((MetaModel<Class<?>>) meta).getPrimaryKey();
-	List<ColumnField> columns = ((MetaModel<Class<?>>) meta).getColumns();
-	List<ForeignKey> foreignKeyFields = ((MetaModel<Class<?>>) meta).getForeignKeys();
 
-	public <T> int insert(Class<?> clazz, T t) {
+	public <T> int insert(Object o) {
+		
+		Class<?> clazz = o.getClass();
+		MetaModel<T>  mta = new MetaModel(clazz);
+		//List<MetaModel<Class<?>>> meta = cfg.getMetaModels();
+		PrimaryKeyField pkFields = mta.getPrimaryKey();
+		List<ColumnField> columns = mta.getColumns();
+		//List<ForeignKey> foreignKeyFields = mta.getForeignKeys();
+
 		try {
 			Connection con = Configuration.getConnection();
 
@@ -47,47 +51,57 @@ public class DaoImpl {
 			}
 			insertCommand.append(");");
 			String sql = insertCommand.toString();
+			System.out.println(sql);
 			PreparedStatement stmt = con.prepareStatement(sql);
 			int index = 1;
 
 			for (ColumnField f : columns) {
-
+				String name =f.getName();
+				System.out.println(name);
 				Field field = null;
+		        try {
+		            field = o.getClass().getDeclaredField(name);
+		            System.out.println(field);
+		            field.setAccessible(true);
+		        } catch (Exception e) {
+		            e.printStackTrace();
+		        }
+		        assert field != null;
 				String fieldType = f.getType().getSimpleName();
 
-				field.setAccessible(true);
+				
 				try {
 					switch (fieldType) {
 					case "int":
-						stmt.setInt(index, (int) field.get(clazz));
+						stmt.setInt(index, (int) field.get(o));
 						index++;
 						break;
 					case "String":
-						stmt.setString(index, (String) field.get(clazz));
+						stmt.setString(index, (String) field.get(o));
 						index++;
 						break;
 					case "boolean":
-						stmt.setBoolean(index, (boolean) field.get(clazz));
+						stmt.setBoolean(index, (boolean) field.get(o));
 						index++;
 						break;
 					case "double":
-						stmt.setDouble(index, (double) field.get(clazz));
+						stmt.setDouble(index, (double) field.get(o));
 						index++;
 						break;
 					case "byte":
-						stmt.setByte(index, (byte) field.get(clazz));
+						stmt.setByte(index, (byte) field.get(o));
 						index++;
 						break;
 					case "float":
-						stmt.setFloat(index, (float) field.get(clazz));
+						stmt.setFloat(index, (float) field.get(o));
 						index++;
 						break;
 					case "long":
-						stmt.setLong(index, (long) field.get(clazz));
+						stmt.setLong(index, (long) field.get(o));
 						index++;
 						break;
 					case "short":
-						stmt.setShort(index, (short) field.get(clazz));
+						stmt.setShort(index, (short) field.get(o));
 						index++;
 						break;
 

@@ -48,23 +48,19 @@ public class Create {
 					
 				}
 
-				System.out.printf(
-						"\t Found a primary key field named %s, of type %s, which maps to the column with name: %s\n",
-						pk.getName(), pk.getType(), pk.getColumnName());
+				sb.append( pk.getColumnName() + " SERIAL PRIMARY KEY, ");
 
 				for (ColumnField column : columns) {
 					String type = cal.getColType(column);
-					String here = column.getColumnName() + " " + type + " ,";
+					String here = column.getColumnName() + " " + type + ", ";
+					sb.append(here);
 				}
 				if (foreignKeyFields == null) {
 
 				} else {
 					for (ForeignKey foreignKey : foreignKeyFields) {
-						System.out.printf(
-								"\t Found a foreign key field named %s, of type %s, which maps to the column with name: %s\n",
-								foreignKey.getName(), foreignKey.getType().getSimpleName(), foreignKey.getColumnName());
+						
 					}
-					System.out.println("");
 				}
 			}
 

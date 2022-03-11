@@ -1,7 +1,5 @@
 package com.room3.dao;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,87 +13,114 @@ import com.room3.util.ForeignKey;
 import com.room3.util.MetaModel;
 import com.room3.util.PrimaryKeyField;
 
-
 public class DaoImpl {
 
-	private Class<?> clazz;
-    private Configuration conn;
-    Configuration cfg = new Configuration();
-	
-    List<MetaModel<Class<?>>>  meta = cfg.getMetaModels();
-    List<PrimaryKeyField> pkFields = (List<PrimaryKeyField>) ((MetaModel<Class<?>>) meta).getPrimaryKey();
-    //List<ColumnField> columns = ((MetaModel<Class<?>>) meta).getColumns();
+	private Configuration conn;
+	Configuration cfg = new Configuration();
+
+	List<MetaModel<Class<?>>> meta = cfg.getMetaModels();
+	List<PrimaryKeyField> pkFields = (List<PrimaryKeyField>) ((MetaModel<Class<?>>) meta).getPrimaryKey();
+	List<ColumnField> columns = ((MetaModel<Class<?>>) meta).getColumns();
 	List<ForeignKey> foreignKeyFields = ((MetaModel<Class<?>>) meta).getForeignKeys();
-    String[] columns = { "tom","bob","loser","rabbit"};
-    
-    public int insert(Class<?> clazz) {
-    	try {
+
+	public <T> int insert(Class<?> clazz, T t) {
+		try {
 			Connection con = Configuration.getConnection();
-			
-			 StringBuilder insertCommand = new StringBuilder();
-		        int totalColumns = columns.length;
-		        int totalColumnsQMarks = columns.length;
-		         String tableName = clazz.getSimpleName().toLowerCase();
-		        insertCommand.append("insert into "+tableName); 
-		        for(String f: columns) {
-		        	String columnName = f;//.getName();  
-		        	
-		        	
-		        	 	insertCommand.append(columnName);
-		                insertCommand.append(totalColumns > 1 ? ", " : ") values(?");
-		            
-		            totalColumns--;
-		        }
-		        	
-		        	
-		        for(int i = 1; i < totalColumnsQMarks; i++){
-		            insertCommand.append(",?");
-		        }
-		       insertCommand.append(");");
-		        
-		    
-		        
-		        
-		        
-		        
-		        
-		        
-		        
-		        
-		        
-				
-				
-					
-					
-					PreparedStatement stmt = con.prepareStatement(sql);
-					
-					stmt.setDouble(1, a.getBalance()); // how do we extract the balance from the Account Obj that's being passed?
-					stmt.setInt(2, a.getAccOwner());
-					stmt.setBoolean(3, a.isActive());
-					
-					ResultSet rs;
-					
-					if ((rs = stmt.executeQuery()) != null) {
 
-						rs.next();			
-						int id = rs.getInt("id");
-						return id; // if the insertion is successful, we return here
+			StringBuilder insertCommand = new StringBuilder();
+			int totalColumns = columns.size();
+			int totalColumnsQMarks = columns.size();
+			String tableName = clazz.getSimpleName().toLowerCase();
+			insertCommand.append("insert into " + tableName);
+			insertCommand.append(" (");
+			for (ColumnField f : columns) {
+				String columnName = f.getName();
+
+				insertCommand.append(columnName);
+				insertCommand.append(totalColumns > 1 ? ", " : ") values(?");
+
+				totalColumns--;
+			}
+
+			for (int i = 1; i < totalColumnsQMarks; i++) {
+				insertCommand.append(",?");
+			}
+			insertCommand.append(");");
+			String sql = insertCommand.toString();
+			PreparedStatement stmt = con.prepareStatement(sql);
+			int index = 1;
+
+			for (ColumnField f : columns) {
+
+				Field field = null;
+				String fieldType = f.getType().getSimpleName();
+
+				field.setAccessible(true);
+				try {
+					switch (fieldType) {
+					case "int":
+						stmt.setInt(index, (int) field.get(clazz));
+						index++;
+						break;
+					case "String":
+						stmt.setString(index, (String) field.get(clazz));
+						index++;
+						break;
+					case "boolean":
+						stmt.setBoolean(index, (boolean) field.get(clazz));
+						index++;
+						break;
+					case "double":
+						stmt.setDouble(index, (double) field.get(clazz));
+						index++;
+						break;
+					case "byte":
+						stmt.setByte(index, (byte) field.get(clazz));
+						index++;
+						break;
+					case "float":
+						stmt.setFloat(index, (float) field.get(clazz));
+						index++;
+						break;
+					case "long":
+						stmt.setLong(index, (long) field.get(clazz));
+						index++;
+						break;
+					case "short":
+						stmt.setShort(index, (short) field.get(clazz));
+						index++;
+						break;
+
 					}
-				
-				
-			
 
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			ResultSet rs;
 			
+			if ((rs = stmt.executeQuery()) != null) {
+
+				rs.next();			
+				int id = rs.getInt("id");
+				return id; // if the insertion is successful, we return here
+			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	
-	
-	
-	return -1;
-	
-    }
-	
-	
+
+		return -1;
+
+	}
+
 }

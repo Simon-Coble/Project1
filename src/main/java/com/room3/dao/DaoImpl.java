@@ -119,14 +119,15 @@ public class DaoImpl {
 				}
 
 			}
-			ResultSet rs;
-			
-			if ((rs = stmt.executeQuery()) != null) {
-
-				rs.next();			
-				int id = rs.getInt("id");
-				return id; // if the insertion is successful, we return here
-			}
+			stmt.executeUpdate();
+//			ResultSet rs;
+//			
+//			if ((rs = stmt.executeQuery()) != null) {
+//
+//				rs.next();			
+//				int id = rs.getInt("id");
+//				return id; // if the insertion is successful, we return here
+//			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

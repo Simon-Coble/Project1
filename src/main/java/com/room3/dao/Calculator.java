@@ -10,9 +10,9 @@ public class Calculator {
 		String t = column.getType().getSimpleName();
 		
 		if (t.equals("String")) {
-			return "VARCHAR(50) ";
+			return "VARCHAR(50)";
 		} else if (t.equals("int")) {
-			return "Integer ";
+			return "Integer";
 		}
 	
 		

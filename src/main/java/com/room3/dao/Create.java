@@ -1,6 +1,7 @@
 package com.room3.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,12 +21,12 @@ public class Create {
 
 	Calculator cal = new Calculator();
 
-	public List<Class<?>> findAllClasses(String packageName) {
+	public void findAllClasses(String packageName) {
 
 		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
 		List<Class<?>> clazzes = reflections.getSubTypesOf(Object.class).stream().collect(Collectors.toList());
 		Configuration p = new Configuration();
-
+	
 		try (Connection conn = Configuration.getConnection()) {
 
 			p.addAnnotatedClasses(clazzes);
@@ -46,7 +47,7 @@ public class Create {
 //				} catch (RuntimeException e) {
 //					
 //				}
-
+				
 				sb.append(pk.getColumnName() + " SERIAL PRIMARY KEY");
 
 				for (ColumnField column : columns) {
@@ -56,12 +57,14 @@ public class Create {
 				}
 				sb.append(")");
 				String sql = sb.toString();
-
-			}
+				System.out.println(sql);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				stmt.executeUpdate();
+			} 
 		} catch (SQLException e) {
-
+			e.printStackTrace();
 		}
-		return clazzes;
+		
 
 	}
 

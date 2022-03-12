@@ -17,11 +17,12 @@ public class drivertest {
 	public static void main(String[] args) {
 	
 		
-		Object du=  new DummyUser(1,"user","pass");
+		Object du=  new DummyUser(2,"user","pass");
 		int id = dao.insert(du);
 		System.out.println(id);
 		
-		
+		Create p = new Create();
+		p.findAllClasses("com.room3.demos");
 		
 	}
 

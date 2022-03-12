@@ -19,53 +19,47 @@ import com.room3.util.Configuration;
 public class Create {
 
 	Calculator cal = new Calculator();
-	
 
 	public List<Class<?>> findAllClasses(String packageName) {
-		
+
 		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
 		List<Class<?>> clazzes = reflections.getSubTypesOf(Object.class).stream().collect(Collectors.toList());
 		Configuration p = new Configuration();
-		
+
 		try (Connection conn = Configuration.getConnection()) {
 
 			p.addAnnotatedClasses(clazzes);
 
-			for (com.room3.util.MetaModel<Class<?>>  metamodel : p.getMetaModels()) {
-				
+			for (com.room3.util.MetaModel<Class<?>> metamodel : p.getMetaModels()) {
+
 				StringBuilder sb = new StringBuilder();
 				String s = "CREATE TABLE IF NOT EXISTS " + metamodel.getSimpleClassName().toLowerCase() + " (";
-				
-				sb.append(s);		
-				
+
+				sb.append(s);
+
 				PrimaryKeyField pk = metamodel.getPrimaryKey();
 				List<ColumnField> columns = metamodel.getColumns();
-				List<ForeignKey> foreignKeyFields = null;
+				// List<ForeignKey> foreignKeyFields = null;
 
-				try {
-					foreignKeyFields = metamodel.getForeignKeys();
-				} catch (RuntimeException e) {
-					
-				}
+//				try {
+//					foreignKeyFields = metamodel.getForeignKeys();
+//				} catch (RuntimeException e) {
+//					
+//				}
 
-				sb.append( pk.getColumnName() + " SERIAL PRIMARY KEY, ");
+				sb.append(pk.getColumnName() + " SERIAL PRIMARY KEY");
 
 				for (ColumnField column : columns) {
 					String type = cal.getColType(column);
-					String here = column.getColumnName() + " " + type + ", ";
+					String here = ", " + column.getColumnName() + " " + type;
 					sb.append(here);
 				}
-				if (foreignKeyFields == null) {
+				sb.append(")");
+				String sql = sb.toString();
 
-				} else {
-					for (ForeignKey foreignKey : foreignKeyFields) {
-						
-					}
-				}
 			}
-
 		} catch (SQLException e) {
-			
+
 		}
 		return clazzes;
 

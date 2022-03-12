@@ -131,13 +131,13 @@ public class DaoImpl {
 				}
 
 			}
+
 			ResultSet rs;
 			
 			stmt.executeUpdate();
 
 				
 				return 1; // if the insertion is successful, we return here
-			
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

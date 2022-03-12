@@ -8,7 +8,7 @@ import com.room3.annotations.Id;
 
 @Entity(tableName = "DummyUser")
 public class DummyUser {
-	@Column(columnName = "")
+	
 	@Id(columnName = "user_id")
 	private int user_id;
 	@Column(columnName = "username")

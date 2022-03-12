@@ -52,10 +52,11 @@ public class MetaModel<T> {
 			// the column reference variable will NOT be null if the field is indeed
 			// annotated with @Column
 			Column column = field.getAnnotation(Column.class);
-				column.columnName();
+				
 			if (column != null) {
 				// if the column is indeed marked with @Colum, instantiate a new ColumnField
 				// object with its data
+				column.columnName();
 				columnFields.add(new ColumnField(field));
 				// now that we've transposed the field to a column Field object, we can capture
 				// data like Type, columnName, etc...

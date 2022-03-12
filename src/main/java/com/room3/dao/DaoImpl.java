@@ -15,8 +15,8 @@ import com.room3.util.PrimaryKeyField;
 
 public class DaoImpl {
 
-	private Configuration conn;
-	Configuration cfg = new Configuration();
+	
+
 
 
 	public <T> int insert(Object o) {
@@ -40,6 +40,18 @@ public class DaoImpl {
 			for (ColumnField f : columns) {
 				String columnName = f.getName();
 
+//				Annotation[] annotations = f.getDeclaredAnnotations();
+//	            for (Annotation annotation : annotations) {
+//	                if (annotation instanceof PKey) {
+//	                    isSerial = ((PKey) annotation).isSerial();
+//	                    // if it is serial, we don't set that number than we need one less ?
+//	                }
+//	            }
+//	            if(isSerial){
+//	                totalColumnsQMarks--;
+//	            }else {
+//				
+				
 				insertCommand.append(columnName);
 				insertCommand.append(totalColumns > 1 ? ", " : ") values(?");
 
@@ -119,15 +131,13 @@ public class DaoImpl {
 				}
 
 			}
+
+			ResultSet rs;
+			
 			stmt.executeUpdate();
-//			ResultSet rs;
-//			
-//			if ((rs = stmt.executeQuery()) != null) {
-//
-//				rs.next();			
-//				int id = rs.getInt("id");
-//				return id; // if the insertion is successful, we return here
-//			}
+
+				
+				return 1; // if the insertion is successful, we return here
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

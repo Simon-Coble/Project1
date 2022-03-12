@@ -15,8 +15,8 @@ import com.room3.util.PrimaryKeyField;
 
 public class DaoImpl {
 
-	private Configuration conn;
-	Configuration cfg = new Configuration();
+	
+
 
 
 	public <T> int insert(Object o) {

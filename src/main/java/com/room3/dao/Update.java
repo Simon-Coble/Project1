@@ -1,5 +1,6 @@
 package com.room3.dao;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -23,29 +24,30 @@ public class Update {
 	Connection con = Configuration.getConnection();
 	public List<Object> flubber = new ArrayList<Object>();
 
-
-
-	public boolean update(Object o) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE " + table.tableName() + " SET ");
-		for (Field field : fields) {
-			sql.append(clazz.getDeclaredAnnotation(Column.class) + " = " + field.getName() + " ");
-		}
-		sql.append("WHERE id = " + clazz.getDeclaredAnnotation(Id.class));
-
-		return true;
-	}
-
-	public boolean delete(Object o) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM " + table.tableName() + " WHERE id = " + clazz.getDeclaredAnnotation(Id.class));
-		return true;
-	}
+//
+//
+//	public boolean update(Object o) {
+//		StringBuilder sql = new StringBuilder();
+//		sql.append("UPDATE " + table.tableName() + " SET ");
+//		for (Field field : fields) {
+//			sql.append(clazz.getDeclaredAnnotation(Column.class) + " = " + field.getName() + " ");
+//		}
+//		sql.append("WHERE id = " + clazz.getDeclaredAnnotation(Id.class));
+//
+//		return true;
+//	}
+//
+//	public boolean delete(Object o) {
+//		StringBuilder sql = new StringBuilder();
+//		sql.append("DELETE FROM " + table.tableName() + " WHERE id = " + clazz.getDeclaredAnnotation(Id.class));
+//		return true;
+//	}
 
 	public List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException {
 		clazz = o.getClass();
 		Entity table = clazz.getDeclaredAnnotation(Entity.class);
 		StringBuilder far = new StringBuilder();
+		Field[] fields = clazz.getDeclaredFields();
 		far.append("SELECT * FROM " + table.tableName().toLowerCase());
 		String sql = far.toString();
 		System.out.println(sql);
@@ -53,12 +55,23 @@ public class Update {
 		ResultSet rs;
 		if ((rs = stmt.executeQuery()) != null) {
 			while (rs.next()) {
+				for (Field field : fields) {
+				Object k =rs.getObject(field.getName());
+				System.out.println(k);
 				
-				flubber.add(getGetter(rs));
+				}
+//				clazz.newInstance();
+				
+				flubber.add(rs.toString());
 			}
 		}
 		return flubber;
+}
+	private void foreach() {
+		// TODO Auto-generated method stub
+		
 	}
+
 	public Object getGetter(Object o) {
 		Method[] methods = o.getClass().getDeclaredMethods();
 	for(Method method : methods){

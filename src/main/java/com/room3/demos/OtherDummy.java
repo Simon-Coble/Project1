@@ -5,30 +5,20 @@ import java.util.Objects;
 import com.room3.annotations.Column;
 import com.room3.annotations.Entity;
 import com.room3.annotations.Id;
+@Entity(tableName = "OtherDummy")
+public class OtherDummy {
 
-@Entity(tableName = "DummyUser")
-public class DummyUser {
-	
 	@Id(columnName = "user_id")
 	private int user_id;
 	@Column(columnName = "username")
 	private String username;
 	@Column(columnName = "passd")
 	private String passd;
-	public DummyUser(int user_id, String username, String passd) {
+	public OtherDummy(int user_id, String username, String passd) {
 		super();
 		this.user_id = user_id;
 		this.username = username;
 		this.passd = passd;
-	}
-	public DummyUser(String username, String passd) {
-		super();
-		this.username = username;
-		this.passd = passd;
-	}
-	
-	public DummyUser() {
-		super();
 	}
 	public int getUser_id() {
 		return user_id;
@@ -42,10 +32,10 @@ public class DummyUser {
 	public void setUsername(String username) {
 		this.username = username;
 	}
-	public String getPass() {
+	public String getPassd() {
 		return passd;
 	}
-	public void setPass(String pass) {
+	public void setPassd(String passd) {
 		this.passd = passd;
 	}
 	@Override
@@ -60,16 +50,14 @@ public class DummyUser {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		DummyUser other = (DummyUser) obj;
-		return Objects.equals(passd, other.passd) && user_id == other.user_id && Objects.equals(username, other.username);
+		OtherDummy other = (OtherDummy) obj;
+		return Objects.equals(passd, other.passd) && user_id == other.user_id
+				&& Objects.equals(username, other.username);
 	}
 	@Override
 	public String toString() {
-		return "DummyUser [user_id=" + user_id + ", username=" + username + ", passd=" + passd + "]";
+		return "OtherDummy [user_id=" + user_id + ", username=" + username + ", passd=" + passd + "]";
 	}
 	
 	
-	
-	
 }
-

@@ -16,11 +16,13 @@ public class drivertest {
 	static DaoImpl dao = new DaoImpl();
 	public static void main(String[] args) {
 	
-
-		Object du=  new DummyUser(2,"user","pass");
-		int id = dao.insert(du);
-		System.out.println(id);
-
+		
+	//	DummyUser du=  new DummyUser(string);
+//		int id = dao.insert(du);
+//		System.out.println(id);
+		
+		//du 
+		
 		Create p = new Create();
 		p.findAllClasses("com.room3.demos");
 		

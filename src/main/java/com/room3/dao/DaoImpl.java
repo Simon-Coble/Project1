@@ -139,6 +139,9 @@ public class DaoImpl {
 				
 				return 1; // if the insertion is successful, we return here
 
+
+
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

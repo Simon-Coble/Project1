@@ -21,6 +21,10 @@ public class drivertest {
 		int id = dao.insert(du);
 		System.out.println(id);
 
+<<<<<<< HEAD
+		
+=======
+>>>>>>> c8e72c4ace5176c6d0d9a9d8298bf54f78e46056
 		Create p = new Create();
 		p.findAllClasses("com.room3.demos");
 		

@@ -1,6 +1,7 @@
 import com.room3.demos.*;
 import com.room3.dao.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,7 +37,19 @@ public class drivertest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	static SelectById sel= new SelectById();
+	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+		Object du=  new DummyUser(2,"user","pass");
 		
-	}
+		sel.selectById(du, 1);
+		
+		
+//		
+		
+		//int id = dao.insert(du);
+//		System.out.println(id);
+//		Create p = new Create();
+//		p.findAllClasses("com.room3.demos");
+
 
 }

@@ -131,6 +131,7 @@ public class DaoImpl {
 				}
 
 			}
+<<<<<<< HEAD
 			ResultSet rs;
 			
 			stmt.executeUpdate();
@@ -138,6 +139,17 @@ public class DaoImpl {
 				
 				return 1; // if the insertion is successful, we return here
 			
+=======
+			stmt.executeUpdate();
+//			ResultSet rs;
+//			
+//			if ((rs = stmt.executeQuery()) != null) {
+//
+//				rs.next();			
+//				int id = rs.getInt("id");
+//				return id; // if the insertion is successful, we return here
+//			}
+>>>>>>> a967b6e4c485f4d959668c1222f4f4d014da7b49
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

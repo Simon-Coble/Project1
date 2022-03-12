@@ -1,6 +1,7 @@
 package com.room3.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,59 +20,51 @@ import com.room3.util.Configuration;
 public class Create {
 
 	Calculator cal = new Calculator();
-	
 
-	public List<Class<?>> findAllClasses(String packageName) {
-		
+	public void findAllClasses(String packageName) {
+
 		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
 		List<Class<?>> clazzes = reflections.getSubTypesOf(Object.class).stream().collect(Collectors.toList());
 		Configuration p = new Configuration();
-		
+	
 		try (Connection conn = Configuration.getConnection()) {
 
 			p.addAnnotatedClasses(clazzes);
 
-			for (com.room3.util.MetaModel<Class<?>>  metamodel : p.getMetaModels()) {
-				
+			for (com.room3.util.MetaModel<Class<?>> metamodel : p.getMetaModels()) {
+
 				StringBuilder sb = new StringBuilder();
 				String s = "CREATE TABLE IF NOT EXISTS " + metamodel.getSimpleClassName().toLowerCase() + " (";
-				
-				sb.append(s);		
-				
+
+				sb.append(s);
+
 				PrimaryKeyField pk = metamodel.getPrimaryKey();
 				List<ColumnField> columns = metamodel.getColumns();
-				List<ForeignKey> foreignKeyFields = null;
+				// List<ForeignKey> foreignKeyFields = null;
 
-				try {
-					foreignKeyFields = metamodel.getForeignKeys();
-				} catch (RuntimeException e) {
-					
-				}
-
-				System.out.printf(
-						"\t Found a primary key field named %s, of type %s, which maps to the column with name: %s\n",
-						pk.getName(), pk.getType(), pk.getColumnName());
+//				try {
+//					foreignKeyFields = metamodel.getForeignKeys();
+//				} catch (RuntimeException e) {
+//					
+//				}
+				
+				sb.append(pk.getColumnName() + " SERIAL PRIMARY KEY");
 
 				for (ColumnField column : columns) {
 					String type = cal.getColType(column);
-					String here = column.getColumnName() + " " + type + " ,";
+					String here = ", " + column.getColumnName() + " " + type;
+					sb.append(here);
 				}
-				if (foreignKeyFields == null) {
-
-				} else {
-					for (ForeignKey foreignKey : foreignKeyFields) {
-						System.out.printf(
-								"\t Found a foreign key field named %s, of type %s, which maps to the column with name: %s\n",
-								foreignKey.getName(), foreignKey.getType().getSimpleName(), foreignKey.getColumnName());
-					}
-					System.out.println("");
-				}
-			}
-
+				sb.append(")");
+				String sql = sb.toString();
+				System.out.println(sql);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				stmt.executeUpdate();
+			} 
 		} catch (SQLException e) {
-			
+			e.printStackTrace();
 		}
-		return clazzes;
+		
 
 	}
 

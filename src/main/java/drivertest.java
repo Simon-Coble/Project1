@@ -15,6 +15,7 @@ import com.room3.util.MetaModel;
 import com.room3.util.PrimaryKeyField;
 public class drivertest {
 	static DaoImpl dao = new DaoImpl();
+
 	static SelectById sel= new SelectById();
 	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		Object du=  new DummyUser(2,"user","pass");
@@ -28,7 +29,6 @@ public class drivertest {
 //		System.out.println(id);
 //		Create p = new Create();
 //		p.findAllClasses("com.room3.demos");
-		
-	}
+
 
 }

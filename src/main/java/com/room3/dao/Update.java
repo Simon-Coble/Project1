@@ -1,6 +1,5 @@
 package com.room3.dao;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,9 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.room3.annotations.Column;
+import org.apache.commons.beanutils.ConstructorUtils;
+
 import com.room3.annotations.Entity;
-import com.room3.annotations.Id;
 import com.room3.util.Configuration;
 
 public class Update {
@@ -55,16 +54,14 @@ public class Update {
 		ResultSet rs;
 		if ((rs = stmt.executeQuery()) != null) {
 			while (rs.next()) {
-				for (Field field : fields) {
-				Object k =rs.getObject(field.getName());
-				System.out.println(k);
+				Object b =createNewInstance(clazz.getName());
 				
 				}
 //				clazz.newInstance();
 				
-				flubber.add(rs.toString());
+				flubber.add(rs);
 			}
-		}
+	
 		return flubber;
 }
 	private void foreach() {
@@ -101,4 +98,15 @@ public class Update {
 		    }
 		    return false; 
 	  }
+	  private Object createNewInstance(String clazzName) {
+          Class<?> beanClass = null;
+          Object beanInstance = null;
+          try {
+            beanClass = getClass().getClassLoader().loadClass(clazzName);
+            beanInstance = ConstructorUtils.invokeConstructor(beanClass, null);
+          } catch (Exception e) {
+            System.out.println("Error during creating class" + clazzName);
+          }
+          return beanInstance;
+        }
 }

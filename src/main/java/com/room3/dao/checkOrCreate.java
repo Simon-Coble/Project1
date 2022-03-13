@@ -3,6 +3,7 @@ package com.room3.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.room3.annotations.Column;
 import com.room3.annotations.Entity;
@@ -11,33 +12,36 @@ import com.room3.util.MetaModel;
 
 public class checkOrCreate {
 
-	public Object selectAllByValueInColumn(String value, Column column, Object o) {
-		
-		String columnName = column.columnName(); 
-		String tableName = o.;
-		
-		Connection conn = Configuration.getConnection();
+	public Object selectAllByValueInColumn(String value, String column, Object o) {
+				
+		Class<?> demo = o.getClass();
 		
 		
-		String sql = "SELECT * FROM " + tableName + " WHERE " + columnName + " = " + value;
+		String tableName = o.getClass().getSimpleName().toLowerCase();
 		
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		
-		ResultSet rs = stmt.executeQuery();
-		
-		Class<?> clazz = table.getClass();
-		MetaModel<?> metamodel = MetaModel.of(clazz);
-		
-		Object obj = table.getClass();
-		
-		
-		clazz.c
-		
-		
-		if (rs.next()) {
+		try(Connection conn = Configuration.getConnection()) {
+			
+			
+			String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = " + value;
+			
+			PreparedStatement stmt = conn.prepareStatement(sql);
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				
+			}
+			
+			
+		} catch (SQLException e) {
 			
 		}
-		return metamodel;
+		
+	
+		
+		
+		return null;
+		
 		
 		
 	}

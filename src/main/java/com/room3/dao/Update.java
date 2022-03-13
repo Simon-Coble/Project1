@@ -48,7 +48,7 @@ public class Update<T> {
 
 	public List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, NoSuchFieldException {
 		clazz = o.getClass();
-		MetaModel<T>  mta = new MetaModel(clazz);
+		MetaModel<T>  mta = new MetaModel<T>(clazz);
 		PrimaryKeyField pkFields = mta.getPrimaryKey();
 		List<ColumnField> columns = mta.getColumns();
 		Entity table = clazz.getDeclaredAnnotation(Entity.class);
@@ -66,9 +66,9 @@ public class Update<T> {
 				String idname= pkFields.getName();
 				Field field = b.getClass().getDeclaredField(idname);
 				field.setAccessible(true);
-				field.setInt(b, (int) field.get(o));
 				
-				for (ColumnField f : columns) {
+				
+				for (Field f : fields) {
 					String name =f.getName();
 					System.out.println(name);
 					 field = null;
@@ -78,25 +78,22 @@ public class Update<T> {
 			            field = b.getClass().getDeclaredField(name);
 			            field.setAccessible(true);
 			            System.out.println(field);
-			            
+
 			            
 			           
 							switch (fieldType) {
 							
 							case "int":
-								int i = rs.getInt(f.getName());
-								
-								field.set(b, i);
-								flubber.add(b);
+								field.setInt(b, rs.getInt(pkFields.getName()));
 								break;
 							case "String":
 								
 								String uname = rs.getString(f.getName());
 								
 								field.set(b, uname);
-								flubber.add(b);
 								break;
 							}
+							flubber.add(b);
 							System.out.println(b.toString());
 						} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block

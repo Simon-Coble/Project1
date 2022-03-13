@@ -1,6 +1,5 @@
 package com.room3.dao;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,15 +10,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.room3.annotations.Column;
-import com.room3.annotations.Entity;
-import com.room3.annotations.Id;
-import com.room3.util.Configuration;
+import org.apache.commons.beanutils.ConstructorUtils;
 
-public class Update {
+import com.room3.annotations.Entity;
+import com.room3.util.ColumnField;
+import com.room3.util.Configuration;
+import com.room3.util.MetaModel;
+import com.room3.util.PrimaryKeyField;
+
+public class Update<T> {
 	private Class<?> clazz;
 	private boolean isTransaction;
 	private List<Boolean> completes;
+
 
 	Connection con = Configuration.getConnection();
 	public List<Object> flubber = new ArrayList<Object>();
@@ -43,8 +46,11 @@ public class Update {
 //		return true;
 //	}
 
-	public List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException {
+	public List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, NoSuchFieldException {
 		clazz = o.getClass();
+		MetaModel<T>  mta = new MetaModel(clazz);
+		PrimaryKeyField pkFields = mta.getPrimaryKey();
+		List<ColumnField> columns = mta.getColumns();
 		Entity table = clazz.getDeclaredAnnotation(Entity.class);
 		StringBuilder far = new StringBuilder();
 		Field[] fields = clazz.getDeclaredFields();
@@ -53,19 +59,63 @@ public class Update {
 		System.out.println(sql);
 		PreparedStatement stmt = con.prepareStatement(sql);
 		ResultSet rs;
-		if ((rs = stmt.executeQuery()) != null) {
+		if((rs = stmt.executeQuery()) != null) {
 			while (rs.next()) {
-				for (Field field : fields) {
-				Object k =rs.getObject(field.getName());
-				System.out.println(k);
+				Object b =createNewInstance(clazz.getName());
+				System.out.println(b);
+				String idname= pkFields.getName();
+				Field field = b.getClass().getDeclaredField(idname);
+				field.setAccessible(true);
+				field.setInt(b, (int) field.get(o));
 				
-				}
-//				clazz.newInstance();
-				
-				flubber.add(rs.toString());
-			}
-		}
-		return flubber;
+				for (ColumnField f : columns) {
+					String name =f.getName();
+					System.out.println(name);
+					 field = null;
+					 
+					 String fieldType = f.getType().getSimpleName();
+					try {
+			            field = b.getClass().getDeclaredField(name);
+			            field.setAccessible(true);
+			            System.out.println(field);
+			            
+			            
+			           
+							switch (fieldType) {
+							
+							case "int":
+								int i = rs.getInt(f.getName());
+								
+								field.set(b, i);
+								flubber.add(b);
+								break;
+							case "String":
+								
+								String uname = rs.getString(f.getName());
+								
+								field.set(b, uname);
+								flubber.add(b);
+								break;
+							}
+							System.out.println(b.toString());
+						} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+//		if ((rs = stmt.executeQuery()) != null) {
+//			while (rs.next()) {
+//					
+//				}
+////				clazz.newInstance();
+//				
+//				flubber.add();
+//			}
+				}}}
+return flubber;
 }
 	private void foreach() {
 		// TODO Auto-generated method stub
@@ -101,4 +151,15 @@ public class Update {
 		    }
 		    return false; 
 	  }
+	  private Object createNewInstance(String clazzName) {
+          Class<?> beanClass = null;
+          Object beanInstance = null;
+          try {
+            beanClass = getClass().getClassLoader().loadClass(clazzName);
+            beanInstance = ConstructorUtils.invokeConstructor(beanClass, null);
+          } catch (Exception e) {
+            System.out.println("Error during creating class" + clazzName);
+          }
+          return beanInstance;
+        }
 }

@@ -136,12 +136,11 @@ public class DaoImpl {
 		
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
-			String idname= pkFields.getName();
-			if (rs.next()) {
+			rs.next();
 				
-				 id  = rs.getInt(1);
+				 id  = (int) rs.getObject(1);
 					
-			}
+			
 
 //				System.out.println(idname);
 //				int id = rs.getInt(idname);

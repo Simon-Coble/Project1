@@ -18,17 +18,17 @@ public class drivertest {
 
 	static SelectById sel= new SelectById();
 	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
-		Object du=  new DummyUser();
+		Object du=  new DummyUser("chris","test");
 		
-		sel.selectById(du, 6);
+		//sel.selectById(du, 6);
 		
 		
 //		
 		
-		//int id = dao.insert(du);
-//		System.out.println(id);
-//		Create p = new Create();
-//		p.findAllClasses("com.room3.demos");
+		int id = dao.insert(du);
+		System.out.println(id);
+	//Create p = new Create();
+	//	p.findAllClasses("com.room3.demos");
 
 
 	}

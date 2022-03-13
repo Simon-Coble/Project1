@@ -27,7 +27,7 @@ public class DaoImpl {
 		PrimaryKeyField pkFields = mta.getPrimaryKey();
 		List<ColumnField> columns = mta.getColumns();
 		//List<ForeignKey> foreignKeyFields = mta.getForeignKeys();
-
+		int id = 0;
 		try {
 			Connection con = Configuration.getConnection();
 
@@ -132,12 +132,26 @@ public class DaoImpl {
 
 			}
 
-			ResultSet rs;
 			
+		
 			stmt.executeUpdate();
-
+			ResultSet rs = stmt.getGeneratedKeys();
+			String idname= pkFields.getName();
+			if (rs.next()) {
 				
-				return 1; // if the insertion is successful, we return here
+				 id  = rs.getInt(1);
+					
+			}
+
+//				System.out.println(idname);
+//				int id = rs.getInt(idname);
+//				System.out.println(id);
+				 // if the insertion is successful, we return here
+			
+		
+			
+				
+				 // if the insertion is successful, we return here
 
 
 
@@ -147,7 +161,7 @@ public class DaoImpl {
 			e.printStackTrace();
 		}
 
-		return -1;
+		return id;	
 
 	}
 

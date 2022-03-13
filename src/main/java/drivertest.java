@@ -17,10 +17,10 @@ public class drivertest {
 	static DaoImpl dao = new DaoImpl();
 
 	static SelectById sel= new SelectById();
-	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-		Object du=  new DummyUser(2,"user","pass");
+	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
+		Object du=  new DummyUser();
 		
-		sel.selectById(du, 1);
+		sel.selectById(du, 6);
 		
 		
 //		
@@ -31,4 +31,5 @@ public class drivertest {
 //		p.findAllClasses("com.room3.demos");
 
 
+	}
 }

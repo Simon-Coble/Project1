@@ -23,7 +23,6 @@ public class Update<T> {
 	private boolean isTransaction;
 	private List<Boolean> completes;
 
-
 	Connection con = Configuration.getConnection();
 	public List<Object> flubber = new ArrayList<Object>();
 
@@ -46,9 +45,10 @@ public class Update<T> {
 //		return true;
 //	}
 
-	public List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, NoSuchFieldException {
+	public List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, NoSuchFieldException {
 		clazz = o.getClass();
-		MetaModel<T>  mta = new MetaModel<T>(clazz);
+		MetaModel<T> mta = new MetaModel<T>(clazz);
 		PrimaryKeyField pkFields = mta.getPrimaryKey();
 		List<ColumnField> columns = mta.getColumns();
 		Entity table = clazz.getDeclaredAnnotation(Entity.class);
@@ -59,50 +59,44 @@ public class Update<T> {
 		System.out.println(sql);
 		PreparedStatement stmt = con.prepareStatement(sql);
 		ResultSet rs;
-		if((rs = stmt.executeQuery()) != null) {
+		if ((rs = stmt.executeQuery()) != null) {
 			while (rs.next()) {
-				Object b =createNewInstance(clazz.getName());
-				System.out.println(b);
-				String idname= pkFields.getName();
+				Object b = createNewInstance(clazz.getName());
+				String idname = pkFields.getName();
 				Field field = b.getClass().getDeclaredField(idname);
 				field.setAccessible(true);
-				
-				
-				for (Field f : fields) {
-					String name =f.getName();
-					System.out.println(name);
-					 field = null;
-					 
-					 String fieldType = f.getType().getSimpleName();
-					try {
-			            field = b.getClass().getDeclaredField(name);
-			            field.setAccessible(true);
-			            System.out.println(field);
 
-			            
-			           
-							switch (fieldType) {
-							
-							case "int":
-								field.setInt(b, rs.getInt(pkFields.getName()));
-								break;
-							case "String":
-								
-								String uname = rs.getString(f.getName());
-								
-								field.set(b, uname);
-								break;
-							}
-							flubber.add(b);
-							System.out.println(b.toString());
-						} catch (IllegalArgumentException e) {
+				for (Field f : fields) {
+					String name = f.getName();
+					field = null;
+
+					String fieldType = f.getType().getSimpleName();
+					try {
+						field = b.getClass().getDeclaredField(name);
+						field.setAccessible(true);
+
+						switch (fieldType) {
+
+						case "int":
+							field.setInt(b, rs.getInt(pkFields.getName()));
+							break;
+						case "String":
+
+							String uname = rs.getString(f.getName());
+
+							field.set(b, uname);
+							break;
+						}
+
+					} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					
+
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
 //		if ((rs = stmt.executeQuery()) != null) {
 //			while (rs.next()) {
 //					
@@ -111,52 +105,57 @@ public class Update<T> {
 //				
 //				flubber.add();
 //			}
-				}}}
-return flubber;
-}
+				}
+				flubber.add(b);
+			}
+		}
+		return flubber;
+	}
+
 	private void foreach() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Object getGetter(Object o) {
 		Method[] methods = o.getClass().getDeclaredMethods();
-	for(Method method : methods){
-	      if(isGetter(method)){
-	        try {
-	          return method.invoke(o);
-	        } catch (IllegalAccessException e) {
-	          // TODO Auto-generated catch block
-	          e.printStackTrace();
-	        } catch (IllegalArgumentException e) {
-	          // TODO Auto-generated catch block
-	          e.printStackTrace();
-	        } catch (InvocationTargetException e) {
-	          // TODO Auto-generated catch block
-	          e.printStackTrace();
-	        }
-	      }
+		for (Method method : methods) {
+			if (isGetter(method)) {
+				try {
+					return method.invoke(o);
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return methods;
 	}
-	return methods;
+
+	private static boolean isGetter(Method method) {
+		// identify get methods
+		if ((method.getName().startsWith("get") || method.getName().startsWith("is")) && method.getParameterCount() == 0
+				&& !method.getReturnType().equals(void.class)) {
+			return true;
+		}
+		return false;
 	}
-	
-	  private static boolean isGetter(Method method){
-		    // identify get methods
-		    if((method.getName().startsWith("get") || method.getName().startsWith("is")) 
-		        && method.getParameterCount() == 0 && !method.getReturnType().equals(void.class)){
-		      return true;
-		    }
-		    return false; 
-	  }
-	  private Object createNewInstance(String clazzName) {
-          Class<?> beanClass = null;
-          Object beanInstance = null;
-          try {
-            beanClass = getClass().getClassLoader().loadClass(clazzName);
-            beanInstance = ConstructorUtils.invokeConstructor(beanClass, null);
-          } catch (Exception e) {
-            System.out.println("Error during creating class" + clazzName);
-          }
-          return beanInstance;
-        }
+
+	private Object createNewInstance(String clazzName) {
+		Class<?> beanClass = null;
+		Object beanInstance = null;
+		try {
+			beanClass = getClass().getClassLoader().loadClass(clazzName);
+			beanInstance = ConstructorUtils.invokeConstructor(beanClass, null);
+		} catch (Exception e) {
+			System.out.println("Error during creating class" + clazzName);
+		}
+		return beanInstance;
+	}
 }

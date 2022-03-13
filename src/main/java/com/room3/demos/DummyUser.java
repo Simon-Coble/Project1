@@ -63,6 +63,10 @@ public class DummyUser {
 		DummyUser other = (DummyUser) obj;
 		return Objects.equals(passd, other.passd) && user_id == other.user_id && Objects.equals(username, other.username);
 	}
+	@Override
+	public String toString() {
+		return "DummyUser [user_id=" + user_id + ", username=" + username + ", passd=" + passd + "]";
+	}
 	
 	
 	

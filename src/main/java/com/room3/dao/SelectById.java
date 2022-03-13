@@ -19,7 +19,7 @@ import org.apache.commons.beanutils.ConstructorUtils;
 public class SelectById {
 
 	
-	public <T> void selectById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+	public <T> void selectById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
 		
 	
 	Class<?> clazz = o.getClass();
@@ -41,6 +41,7 @@ public class SelectById {
 		sqlCommand.append(" = ");
 		sqlCommand.append(id);
 		String sql = sqlCommand.toString();
+		System.out.println(sql);
 		PreparedStatement stmt = con.prepareStatement(sql);
 		
 		ResultSet rs;
@@ -48,23 +49,34 @@ public class SelectById {
 			while (rs.next()) {
 				Object b =createNewInstance(clazz.getName());
 				System.out.println(b);
+				String idname= pkFields.getName();
+				Field field = b.getClass().getDeclaredField(idname);
+				field.setAccessible(true);
+				field.setInt(b, id);
+				
 				for (ColumnField f : columns) {
 					String name =f.getName();
 					System.out.println(name);
-					Field field = null;
+					 field = null;
+					 
 					 String fieldType = f.getType().getSimpleName();
 					try {
 			            field = b.getClass().getDeclaredField(name);
-			            System.out.println(field);
 			            field.setAccessible(true);
+			            System.out.println(field);
+			            
 			            
 			           
 							switch (fieldType) {
+							
 							case "int":
-								field.setInt(b, id);
+								//field.setInt(b, id);
 								break;
 							case "String":
-								field.set(b, name);
+								
+								String uname = rs.getString(f.getName());
+								
+								field.set(b, uname);
 								break;
 							}
 							System.out.println(b.toString());

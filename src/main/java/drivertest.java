@@ -15,7 +15,28 @@ import com.room3.util.MetaModel;
 import com.room3.util.PrimaryKeyField;
 public class drivertest {
 	static DaoImpl dao = new DaoImpl();
-
+	static Update up = new Update();
+	static DummyUser durr = new DummyUser();
+	public static void main(String[] args) {
+	
+		
+		Object du=  new DummyUser(1,"user","pass");
+//		int id = dao.insert(du);
+//		System.out.println(id);
+		
+		try {
+			for(Object o : up.findAll(durr)) {
+				System.out.println(o);}
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	static SelectById sel= new SelectById();
 	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 		Object du=  new DummyUser(2,"user","pass");

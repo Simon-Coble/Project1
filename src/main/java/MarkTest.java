@@ -19,13 +19,17 @@ public class MarkTest {
 		op = lo.selectAllByValueInColumn("chris", "username", DummyUser.class);
 
 		for (Object o : op) {
-			Field[] fields = o.getClass().getDeclaredFields();
-			System.out.println(o.getClass().getSimpleName());
-			for (Field field : fields) {
+			
+			for (Field field : o.getClass().getDeclaredFields()) {
 				field.setAccessible(true);
 				System.out.print(field.get(o) + " ");
 			}
 			System.out.println();
 		}
+		
+		DummyUser kol = new DummyUser(1, "fgdfgd", "dgfgdg");
+		kol = (DummyUser) lo.updateSingle(kol);
+		//kol = (DummyUser) lo.updateSingle(kol);
+		System.out.println(kol.getPass());
 	}
 }

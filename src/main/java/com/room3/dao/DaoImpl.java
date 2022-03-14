@@ -1,15 +1,22 @@
 package com.room3.dao;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.beanutils.ConstructorUtils;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+
+import com.room3.annotations.Entity;
 import com.room3.util.ColumnField;
 import com.room3.util.Configuration;
-import com.room3.util.ForeignKey;
 import com.room3.util.MetaModel;
 import com.room3.util.PrimaryKeyField;
 
@@ -165,5 +172,280 @@ public class DaoImpl {
 		return -1;
 
 	}
+
+	public <T> List<Object> findAll(Object o) throws SQLException, NoSuchMethodException, SecurityException,
+			IllegalAccessException, NoSuchFieldException {
+		
+		Class<?> clazz;
+		
+
+		Connection con = Configuration.getConnection();
+		List<Object> flubber = new ArrayList<Object>();
+
+		
+		clazz = o.getClass();
+		MetaModel<T> mta = new MetaModel<T>(clazz);
+		PrimaryKeyField pkFields = mta.getPrimaryKey();
+		List<ColumnField> columns = mta.getColumns();
+		Entity table = clazz.getDeclaredAnnotation(Entity.class);
+		StringBuilder far = new StringBuilder();
+		Field[] fields = clazz.getDeclaredFields();
+		far.append("SELECT * FROM " + table.tableName().toLowerCase());
+		String sql = far.toString();
+		System.out.println(sql);
+		PreparedStatement stmt = con.prepareStatement(sql);
+		ResultSet rs;
+		if ((rs = stmt.executeQuery()) != null) {
+			while (rs.next()) {
+				Object b = createNewInstance(clazz.getName());
+				String idname = pkFields.getName();
+				Field field = b.getClass().getDeclaredField(idname);
+				field.setAccessible(true);
+
+				for (Field f : fields) {
+					String name = f.getName();
+					field = null;
+
+					String fieldType = f.getType().getSimpleName();
+					try {
+						field = b.getClass().getDeclaredField(name);
+						field.setAccessible(true);
+
+						switch (fieldType) {
+
+						case "int":
+							field.setInt(b, rs.getInt(pkFields.getName()));
+							break;
+						case "String":
+
+							String uname = rs.getString(f.getName());
+
+							field.set(b, uname);
+							break;
+						}
+
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+//		if ((rs = stmt.executeQuery()) != null) {
+//			while (rs.next()) {
+//					
+//				}
+////				clazz.newInstance();
+//				
+//				flubber.add();
+//			}
+				}
+				flubber.add(b);
+			}
+		}
+		return flubber;
+	}
+	public <T> Object selectById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
+		
+		
+		Class<?> clazz = o.getClass();
+		MetaModel<T>  mta = new MetaModel(clazz);
+		//List<MetaModel<Class<?>>> meta = cfg.getMetaModels();
+		PrimaryKeyField pkFields = mta.getPrimaryKey();
+		List<ColumnField> columns = mta.getColumns();
+		
+		try {
+			Connection con = Configuration.getConnection();
+			
+			StringBuilder sqlCommand = new StringBuilder();
+			sqlCommand.append("select * from ");
+			String tableName = clazz.getSimpleName().toLowerCase();
+			sqlCommand.append(tableName);
+			sqlCommand.append(" where ");
+			String idName = pkFields.getColumnName();
+			sqlCommand.append(idName);
+			sqlCommand.append(" = ");
+			sqlCommand.append(id);
+			String sql = sqlCommand.toString();
+			System.out.println(sql);
+			PreparedStatement stmt = con.prepareStatement(sql);
+			
+			ResultSet rs;
+			if((rs = stmt.executeQuery()) != null) {
+				while (rs.next()) {
+					Object b =createNewInstance(clazz.getName());
+					System.out.println(b);
+					String idname= pkFields.getName();
+					Field field = b.getClass().getDeclaredField(idname);
+					field.setAccessible(true);
+					field.setInt(b, id);
+					
+					for (ColumnField f : columns) {
+						String name =f.getName();
+						System.out.println(name);
+						 field = null;
+						 
+						 String fieldType = f.getType().getSimpleName();
+						try {
+				            field = b.getClass().getDeclaredField(name);
+				            field.setAccessible(true);
+				            System.out.println(field);
+				            
+				            
+				           
+								switch (fieldType) {
+								
+								case "int":
+									//field.setInt(b, id);
+									break;
+								case "String":
+									
+									String uname = rs.getString(f.getName());
+									
+									field.set(b, uname);
+									break;
+								}
+								System.out.println(b.toString());
+								o=b;
+//								case "oolean":
+//									
+//									break;
+//								case "double":
+//									
+//									break;
+//								case "byte":
+//									
+//									break;
+//								case "float":
+//									
+//									break;
+//								case "long":
+//									
+//									break;
+//								case "short":
+//									
+//									break;
+	//
+//								}
+				            
+				            
+								    
+				        } catch (Exception e) {
+				            e.printStackTrace();
+				        }
+				}
+			}
+			
+			}
+			
+			
+		
+		
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return o;
+		
+		
+		
+		
+		
+	}
+		private Object createNewInstance(String clazzName) {
+			  Class<?> beanClass = null;
+			  Object beanInstance = null;
+			  try {
+			    beanClass = getClass().getClassLoader().loadClass(clazzName);
+			    beanInstance = ConstructorUtils.invokeConstructor(beanClass, null);
+			  } catch (Exception e) {
+			    System.out.println("Error during creating class" + clazzName);
+			  }
+			  return beanInstance;
+			}
+		
+		
+		public <T> void deleteById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
+			
+			
+			Class<?> clazz = o.getClass();
+			MetaModel<T>  mta = new MetaModel(clazz);
+			//List<MetaModel<Class<?>>> meta = cfg.getMetaModels();
+			PrimaryKeyField pkFields = mta.getPrimaryKey();
+			List<ColumnField> columns = mta.getColumns();
+			
+			try {
+				Connection con = Configuration.getConnection();
+				
+				StringBuilder sqlCommand = new StringBuilder();
+				sqlCommand.append("delete from ");
+				String tableName = clazz.getSimpleName().toLowerCase();
+				sqlCommand.append(tableName);
+				sqlCommand.append(" where ");
+				String idName = pkFields.getColumnName();
+				sqlCommand.append(idName);
+				sqlCommand.append(" = ");
+				sqlCommand.append(id);
+				String sql = sqlCommand.toString();
+				System.out.println(sql);
+				PreparedStatement stmt = con.prepareStatement(sql);
+				stmt.execute();
+		
+			}catch(SQLException e){
+				e.printStackTrace();
+			}
+		
+	}public void findAllClasses(String packageName) {
+		Calculator cal = new Calculator();
+		Reflections reflections = new Reflections(packageName, new SubTypesScanner(false));
+		List<Class<?>> clazzes = reflections.getSubTypesOf(Object.class).stream().collect(Collectors.toList());
+		Configuration p = new Configuration();
+	
+		try (Connection conn = Configuration.getConnection()) {
+
+			p.addAnnotatedClasses(clazzes);
+
+			for (com.room3.util.MetaModel<Class<?>> metamodel : p.getMetaModels()) {
+
+				StringBuilder sb = new StringBuilder();
+				String s = "CREATE TABLE IF NOT EXISTS " + metamodel.getSimpleClassName().toLowerCase() + " (";
+
+				sb.append(s);
+
+				PrimaryKeyField pk = metamodel.getPrimaryKey();
+				List<ColumnField> columns = metamodel.getColumns();
+				// List<ForeignKey> foreignKeyFields = null;
+
+//				try {
+//					foreignKeyFields = metamodel.getForeignKeys();
+//				} catch (RuntimeException e) {
+//					
+//				}
+				
+				sb.append(pk.getColumnName() + " SERIAL PRIMARY KEY");
+
+				for (ColumnField column : columns) {
+					String type = cal.getColType(column);
+					String here = ", " + column.getColumnName() + " " + type;
+					sb.append(here);
+				}
+				sb.append(")");
+				String sql = sb.toString();
+				System.out.println(sql);
+				PreparedStatement stmt = conn.prepareStatement(sql);
+				stmt.executeUpdate();
+			} 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
 
 }

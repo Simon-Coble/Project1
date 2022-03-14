@@ -64,7 +64,7 @@ public class DaoImpl {
 			insertCommand.append(");");
 			String sql = insertCommand.toString();
 			System.out.println(sql);
-			PreparedStatement stmt = con.prepareStatement(sql);
+			PreparedStatement stmt = con.prepareStatement(sql, 1);
 			int index = 1;
 
 			for (ColumnField f : columns) {
@@ -134,14 +134,16 @@ public class DaoImpl {
 
 			
 		
-			stmt.executeUpdate();
-			ResultSet rs = stmt.getGeneratedKeys();
-			rs.next();
-				
-				 id  = (int) rs.getObject(1);
-					
-			
+			int i = stmt.executeUpdate();
 
+            if (i > 0) {
+                ResultSet rs = stmt.getGeneratedKeys();
+
+                while (rs.next()) {
+                    return rs.getInt(1);
+                }
+			
+            }
 //				System.out.println(idname);
 //				int id = rs.getInt(idname);
 //				System.out.println(id);
@@ -160,7 +162,7 @@ public class DaoImpl {
 			e.printStackTrace();
 		}
 
-		return id;	
+		return -1;
 
 	}
 

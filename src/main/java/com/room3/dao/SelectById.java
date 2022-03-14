@@ -19,7 +19,7 @@ import org.apache.commons.beanutils.ConstructorUtils;
 public class SelectById {
 
 	
-	public <T> void selectById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
+	public <T> Object selectById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
 		
 	
 	Class<?> clazz = o.getClass();
@@ -80,6 +80,7 @@ public class SelectById {
 								break;
 							}
 							System.out.println(b.toString());
+							o=b;
 //							case "oolean":
 //								
 //								break;
@@ -122,6 +123,8 @@ public class SelectById {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
+	return o;
+	
 	
 	
 	
@@ -140,4 +143,35 @@ public class SelectById {
 		}
 	
 	
+	public <T> void deleteById(Object o, int id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException, SecurityException {
+		
+		
+		Class<?> clazz = o.getClass();
+		MetaModel<T>  mta = new MetaModel(clazz);
+		//List<MetaModel<Class<?>>> meta = cfg.getMetaModels();
+		PrimaryKeyField pkFields = mta.getPrimaryKey();
+		List<ColumnField> columns = mta.getColumns();
+		
+		try {
+			Connection con = Configuration.getConnection();
+			
+			StringBuilder sqlCommand = new StringBuilder();
+			sqlCommand.append("delete from ");
+			String tableName = clazz.getSimpleName().toLowerCase();
+			sqlCommand.append(tableName);
+			sqlCommand.append(" where ");
+			String idName = pkFields.getColumnName();
+			sqlCommand.append(idName);
+			sqlCommand.append(" = ");
+			sqlCommand.append(id);
+			String sql = sqlCommand.toString();
+			System.out.println(sql);
+			PreparedStatement stmt = con.prepareStatement(sql);
+			stmt.execute();
+	
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+	
+}
 }

@@ -17,15 +17,15 @@ public static void main(String[] args) throws NoSuchMethodException, IllegalAcce
 	DaoImpl dao = new DaoImpl();
     Update up = new Update();
     DummyUser durr = new DummyUser();
-    Object du=  new DummyUser("user","pass");
+    Object du= sel.selectById(durr, 12);
 	
-
-
+System.out.println(du.toString());
+    //sel.deleteById(du, 16);
 
 //
 
-  int id = dao.insert(du);
-  System.out.println(id);
+//  int id = dao.insert(du);
+// System.out.println(id);
 //  Create p = new Create();
 //  p.findAllClasses("com.room3.demos");
 }

@@ -29,8 +29,7 @@ public class CheckOrCreate {
 		try (Connection con = Configuration.getConnection()) {
 
 			String sql = "SELECT * FROM " + o.getSimpleName().toLowerCase() + " WHERE " + column + " = " + "'" + value + "'";
-			System.out.println(sql);
-
+			
 			PreparedStatement stmt = con.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
 
@@ -59,14 +58,59 @@ public class CheckOrCreate {
 						System.out.println("log this 1");
 					}
 				} stuff.add(b);
+				
 			}
 		} catch (SQLException e) {
 			System.out.println("log this");
 		}
 		
 		return stuff;
-
 	}
+	
+	public String updateSingle(Object o) {
+		
+		MetaModel<Class> mta = new MetaModel(o.getClass());
+		PrimaryKeyField pkField = mta.getPrimaryKey();
+		List<ColumnField> columns = mta.getColumns();
+	
+		String update = "UPDATE " + o.getClass().getSimpleName().toLowerCase() + " SET ";
+		StringBuilder sb = new StringBuilder();
+		sb.append(update);
+		String id = "" , columnValue; 
+		try (Connection con = Configuration.getConnection()) {
+			
+			for (Field field: o.getClass().getDeclaredFields()) {
+				field.setAccessible(true);
+
+				try {
+					if (field.getName().equals(pkField.getName())) {
+						id = " WHERE " + pkField.getColumnName() + " = " + field.get(o);
+						System.out.println(id);
+
+					} else {
+						for (ColumnField columnfield : columns) {
+							if (field.getName().equals(columnfield.getName())) {
+								columnValue = columnfield.getColumnName() + " = " + field.get(o) + ",";
+								sb.append(columnValue);
+							}
+						}
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+					System.out.println("log this 1");
+				}
+			} sb.append(id);
+			System.out.println(sb.toString());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return null;
+		
+	}
+	
+	
 
 	private Object createNewInstance(String clazzName) {
 

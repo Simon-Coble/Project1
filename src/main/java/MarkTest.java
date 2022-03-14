@@ -27,7 +27,9 @@ public class MarkTest {
 			System.out.println();
 		}
 		
-		DummyUser kol = new DummyUser(1, "chris", "pwre");
-		lo.updateSingle(kol);
+		DummyUser kol = new DummyUser(1, "fgdfgd", "dgfgdg");
+		kol = (DummyUser) lo.updateSingle(kol);
+		//kol = (DummyUser) lo.updateSingle(kol);
+		System.out.println(kol.getPass());
 	}
 }

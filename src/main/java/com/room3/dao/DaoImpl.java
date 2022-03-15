@@ -70,17 +70,17 @@ public class DaoImpl {
 			}
 			insertCommand.append(");");
 			String sql = insertCommand.toString();
-			System.out.println(sql);
+			
 			PreparedStatement stmt = con.prepareStatement(sql, 1);
 			int index = 1;
 
 			for (ColumnField f : columns) {
 				String name =f.getName();
-				System.out.println(name);
+				
 				Field field = null;
 		        try {
 		            field = o.getClass().getDeclaredField(name);
-		            System.out.println(field);
+		            
 		            field.setAccessible(true);
 		        } catch (Exception e) {
 		            e.printStackTrace();
@@ -192,7 +192,7 @@ public class DaoImpl {
 		Field[] fields = clazz.getDeclaredFields();
 		far.append("SELECT * FROM " + table.tableName().toLowerCase());
 		String sql = far.toString();
-		System.out.println(sql);
+		
 		PreparedStatement stmt = con.prepareStatement(sql);
 		ResultSet rs;
 		if ((rs = stmt.executeQuery()) != null) {
@@ -208,7 +208,7 @@ public class DaoImpl {
 						if (f.getName().equals(pkField.getName())) {
 							
 							int sname = rs.getInt(pkField.getColumnName());
-							System.out.println(sname);
+							
 							f.setAccessible(true);
 							f.setInt(b, sname);
 						}else {
@@ -276,14 +276,14 @@ public class DaoImpl {
 			sqlCommand.append(" = ");
 			sqlCommand.append(id);
 			String sql = sqlCommand.toString();
-			System.out.println(sql);
+			
 			PreparedStatement stmt = con.prepareStatement(sql);
 			
 			ResultSet rs;
 			if((rs = stmt.executeQuery()) != null) {
 				while (rs.next()) {
 					Object b =createNewInstance(clazz.getName());
-					System.out.println(b);
+					
 					String idname= pkFields.getName();
 					Field field = b.getClass().getDeclaredField(idname);
 					field.setAccessible(true);
@@ -291,15 +291,14 @@ public class DaoImpl {
 					
 					for (ColumnField f : columns) {
 						String name =f.getName();
-						System.out.println(name);
+						
 						 field = null;
 						 
 						 String fieldType = f.getType().getSimpleName();
 						try {
 				            field = b.getClass().getDeclaredField(name);
 				            field.setAccessible(true);
-				            System.out.println(field);
-				            
+				          
 				            
 				           
 								switch (fieldType) {
@@ -401,7 +400,6 @@ public class DaoImpl {
 				sqlCommand.append(" = ");
 				sqlCommand.append(id);
 				String sql = sqlCommand.toString();
-				System.out.println(sql);
 				PreparedStatement stmt = con.prepareStatement(sql);
 				stmt.execute();
 		
@@ -445,7 +443,6 @@ public class DaoImpl {
 				}
 				sb.append(")");
 				String sql = sb.toString();
-				System.out.println(sql);
 				PreparedStatement stmt = conn.prepareStatement(sql);
 				stmt.executeUpdate();
 			} 
@@ -462,7 +459,7 @@ public class DaoImpl {
 		try (Connection con = Configuration.getConnection()) {
 
 			String sql = "SELECT * FROM " + o.getSimpleName().toLowerCase() + " WHERE " + column + " = " + "'" + value + "'";
-			System.out.println(sql);
+			
 
 			PreparedStatement stmt = con.prepareStatement(sql);
 			ResultSet rs = stmt.executeQuery();
@@ -523,7 +520,7 @@ public class DaoImpl {
 				try {
 					if (field.getName().equals(pkField.getName())) {
 						id = " WHERE " + pkField.getColumnName() + " = " + field.get(o);
-						System.out.println(id);
+						
 
 					} else {
 						for (int i = 0; i < columns.size(); i++ ) {
@@ -541,7 +538,7 @@ public class DaoImpl {
 					}
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
-					System.out.println("log this 1");
+					
 				}
 			} sb.append(id + " RETURNING *");
 			PreparedStatement stmt = con.prepareStatement(sb.toString());
@@ -574,14 +571,14 @@ public class DaoImpl {
 						o=b;
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
-						System.out.println("log this 1");
+						
 					}
 				} 
 				
 			}
 			
 			
-			System.out.println(sb.toString());
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

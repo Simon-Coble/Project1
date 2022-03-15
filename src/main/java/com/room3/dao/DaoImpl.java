@@ -45,7 +45,7 @@ public class DaoImpl {
 			insertCommand.append("insert into " + tableName);
 			insertCommand.append(" (");
 			for (ColumnField f : columns) {
-				String columnName = f.getName();
+				String columnName = f.getColumnName();
 
 //				Annotation[] annotations = f.getDeclaredAnnotations();
 //	            for (Annotation annotation : annotations) {
@@ -185,7 +185,7 @@ public class DaoImpl {
 		
 		clazz = o.getClass();
 		MetaModel<T> mta = new MetaModel<T>(clazz);
-		PrimaryKeyField pkFields = mta.getPrimaryKey();
+		PrimaryKeyField pkField = mta.getPrimaryKey();
 		List<ColumnField> columns = mta.getColumns();
 		Entity table = clazz.getDeclaredAnnotation(Entity.class);
 		StringBuilder far = new StringBuilder();
@@ -198,33 +198,40 @@ public class DaoImpl {
 		if ((rs = stmt.executeQuery()) != null) {
 			while (rs.next()) {
 				Object b = createNewInstance(clazz.getName());
-				String idname = pkFields.getName();
-				Field field = b.getClass().getDeclaredField(idname);
-				field.setAccessible(true);
-
+				
 				for (Field f : fields) {
 					String name = f.getName();
-					field = null;
-
-					String fieldType = f.getType().getSimpleName();
+					f.setAccessible(true);
+					String fieldType =null;
+					String columnName=null;
 					try {
-						field = b.getClass().getDeclaredField(name);
-						field.setAccessible(true);
-
-						switch (fieldType) {
+						if (f.getName().equals(pkField.getName())) {
+							
+							int sname = rs.getInt(pkField.getColumnName());
+							System.out.println(sname);
+							f.setAccessible(true);
+							f.setInt(b, sname);
+						}else {
+						for (ColumnField c : columns) {	
+						 columnName = c.getColumnName();
+						f.setAccessible(true);
+						fieldType = c.getType().getSimpleName();
+						}switch (fieldType) {
 
 						case "int":
-							field.setInt(b, rs.getInt(pkFields.getName()));
+							int jname = rs.getInt(columnName);
+							f.set(b, jname);
 							break;
 						case "String":
 
-							String uname = rs.getString(f.getName());
+							String uname = rs.getString(columnName);
 
-							field.set(b, uname);
+							f.set(b, uname);
 							break;
+						
 						}
-
-					} catch (IllegalArgumentException e) {
+						}
+						} catch (IllegalArgumentException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 
@@ -298,7 +305,8 @@ public class DaoImpl {
 								switch (fieldType) {
 								
 								case "int":
-									//field.setInt(b, id);
+									int jname = rs.getInt(f.getName());
+									field.set(b, jname);
 									break;
 								case "String":
 									
@@ -474,7 +482,11 @@ public class DaoImpl {
 						} else {
 							for (ColumnField columnfield : columns) {
 								if (field.getName().equals(columnfield.getName())) {
-									field.set(b, rs.getString(columnfield.getName()));
+									if (field.getType().getSimpleName().equals("String")) {
+										field.set(b, rs.getString(columnfield.getName()));
+										} else if (field.getType().getSimpleName().equals("int")) {
+											field.set(b, rs.getInt(columnfield.getName()));
+										}
 									
 								}
 							}
@@ -550,16 +562,21 @@ public class DaoImpl {
 						} else {
 							for (ColumnField columnfield : columns) {
 								if (field.getName().equals(columnfield.getName())) {
-									field.set(b, rs.getString(columnfield.getName()));
+									if (field.getType().getSimpleName().equals("String")) {
+										field.set(b, rs.getString(columnfield.getColumnName()));
+										} else if (field.getType().getSimpleName().equals("int")) {
+											field.set(b, rs.getInt(columnfield.getColumnName()));
+										}
 									
 								}
 							}
 						}
+						o=b;
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 						System.out.println("log this 1");
 					}
-				} return b;
+				} 
 				
 			}
 			
@@ -570,7 +587,7 @@ public class DaoImpl {
 		}
 		
 		
-		return null;
+		return o;
 		
 	}
 

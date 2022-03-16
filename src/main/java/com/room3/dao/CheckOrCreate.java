@@ -48,8 +48,12 @@ public class CheckOrCreate {
 						} else {
 							for (ColumnField columnfield : columns) {
 								if (field.getName().equals(columnfield.getName())) {
+								
+									if (field.getType().getSimpleName().equals("String")) {
 									field.set(b, rs.getString(columnfield.getName()));
-									
+									} else if (field.getType().getSimpleName().equals("int")) {
+										field.set(b, rs.getInt(columnfield.getName()));
+									}
 								}
 							}
 						}

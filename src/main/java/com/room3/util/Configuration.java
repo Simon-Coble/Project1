@@ -1,21 +1,38 @@
 package com.room3.util;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
+
 import com.room3.annotations.*;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 // pooled connection Connection con = Configuration.getConnection();
 public class Configuration {
 	private static BasicDataSource ds = new BasicDataSource();
-	static {
-		ds.setUrl("jdbc:postgresql://team-3-enterprise.cvtq9j4axrge.us-east-1.rds.amazonaws.com:5432/postgres");
-		ds.setUsername("postgres");
-		ds.setPassword("postgres");
+	private Properties prop = new Properties();
+	
+	public Configuration(String file) {
+		try {
+			prop.load(new FileReader(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ds.setUrl(prop.getProperty("url"));
+		ds.setUsername(prop.getProperty("username"));
+		ds.setPassword(prop.getProperty("password"));
 	}
+	
 	public static Connection getConnection(){
 		try {
 			return ds.getConnection();
@@ -24,8 +41,10 @@ public class Configuration {
 		}
 		return null;
 	}
-	public Configuration() {}
 	
+	public Configuration() {
+		
+	}
 private List<MetaModel<Class<?>>> metaModelList; // for example, this is a placeholder for metamodels of SuperVillain, SuperPrison, Crime
 	
 	// constructor - addAnnotatedClass

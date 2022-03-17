@@ -19,7 +19,7 @@ public class Configuration {
 	private Properties prop = new Properties();
 	
 	public Configuration(String file) {
-		try {
+		try  {
 			prop.load(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

@@ -7,8 +7,11 @@
 
 ## User documentation
 1. Pull the dependancies over into the desired project.
-2. Find the Configuration file and enter the URL, Password, and Username
+
+2. Create a properties file with the url, username, password. Enter in the properties file location as a string call to Configuration constructor. ex ... new Configuration ("C:\\Users\\mkolb\\Desktop\\New folder\\Project1SV\\src\\main\\resources\\application.properties");
+
 3. After a class has been created mark the class with the @Entity annotation along with @Id for the primary key value and column for the rest of the values
+
 4. Create an instance of DaoImpl to call the methods inside the ORM
 
 :Use findAllClasses to create tables
